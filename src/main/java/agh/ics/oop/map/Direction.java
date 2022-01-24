@@ -1,8 +1,8 @@
 package agh.ics.oop.map;
 
 public enum Direction {
-    FORWARD,
-    BACKWARD,
+    UP,
+    DOWN,
     RIGHT,
     LEFT;
 

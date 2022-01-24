@@ -5,16 +5,15 @@ import agh.ics.oop.map.Player;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class Ghost implements IPowerUp {
-
+public class Shield implements IPowerUp{
     private final static Timer timer = new Timer();
     @Override
     public void activate(Player player) {
-        player.turnedIntoGhost();
+        player.grabbedShield();
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                player.turnedIntoHuman();
+                player.lostShield();
             }
         }, 7*1000);
     }
