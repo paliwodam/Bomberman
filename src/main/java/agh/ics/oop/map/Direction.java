@@ -8,8 +8,8 @@ public enum Direction {
 
     private static final Vector2d[] dVector2d = {
             new Vector2d(0, -1),
-            new Vector2d(1, 0),
             new Vector2d(0, 1),
+            new Vector2d(1, 0),
             new Vector2d(-1, 0)
     };
 

@@ -4,19 +4,19 @@ import agh.ics.oop.map.Player;
 
 import java.util.Objects;
 
-public class Pocket implements IPowerUp{
+public class SniperGloves implements IPowerUp{
     @Override
     public void activate(Player player) {
-        player.grabbedPocket();
+        player.grabbedSniperGloves();
     }
 
     public boolean equals(Object other) {
-        return (other instanceof Pocket);
+        return (other instanceof SniperGloves);
     }
 
     public int hashCode(){
         return Objects.hash();
     }
 
-    public String toString() { return "pocket"; }
+    public String toString() { return "gloves"; }
 }

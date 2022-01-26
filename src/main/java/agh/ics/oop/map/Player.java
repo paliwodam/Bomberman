@@ -1,28 +1,37 @@
 package agh.ics.oop.map;
 
-import agh.ics.oop.gui.ITriedToMoveObeserver;
-import agh.ics.oop.gui.ITriedToPutBombObserver;
+import agh.ics.oop.gui.ITriedToMoveObserver;
 import agh.ics.oop.map.elem.Bomb;
 import agh.ics.oop.map.elem.IBombExplodedObserver;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
-public class Player implements ITriedToMoveObeserver, IBombExplodedObserver, ITriedToPutBombObserver {
-    private GameMap map;
+public class Player implements ITriedToMoveObserver, IBombExplodedObserver {
     private Health health;
     private Direction direction;
-    private LinkedList<Bomb> bombs = new LinkedList<>();
+    private final GameMap map;
+    private final LinkedList<Bomb> bombs = new LinkedList<>();
+    private final ArrayList<IPlayerDiedObserver> observers = new ArrayList<>();
 
-    private boolean isGhost;
-    private boolean hasShield;
-    private boolean hasSniperGloves;
+    private final AtomicBoolean isGhost;
+    private final AtomicBoolean hasShield;
+    private final AtomicBoolean hasSniperGloves;
+    private final AtomicBoolean spedUp;
+    private final AtomicInteger pocketsNum;
 
     public Player(GameMap map) {
         this.map = map;
         this.health = Health.HEIGHT;
         this.direction = Direction.UP;
-        this.isGhost = false;
-        this.hasShield = false;
+        this.isGhost = new AtomicBoolean(false);
+        this.hasShield = new AtomicBoolean(false);
+        this.hasSniperGloves = new AtomicBoolean(false);
+        this.spedUp = new AtomicBoolean(false);
+        this.pocketsNum = new AtomicInteger(0);
         addBomb();
     }
 
@@ -31,7 +40,7 @@ public class Player implements ITriedToMoveObeserver, IBombExplodedObserver, ITr
         this.direction = direction;
     }
 
-    public void addBomb(){
+    private void addBomb(){
         Bomb bomb = new Bomb();
         bomb.addIBombExplodedObserver(this);
         this.bombs.add(bomb);
@@ -44,52 +53,89 @@ public class Player implements ITriedToMoveObeserver, IBombExplodedObserver, ITr
         }
     }
 
+    public int getHealthPoints() { return this.health.idx; }
+
+    public int getPocketsNum() { return this.pocketsNum.get(); }
+
     public boolean isGhost(){
-        return this.isGhost;
+        return this.isGhost.get();
     }
 
-//    public boolean hasShield() { return this.hasShield; }
+    public boolean hasGloves() { return this.hasSniperGloves.get(); }
+
+    public boolean hasShield() { return this.hasShield.get(); }
+
+    public boolean hasSpeedUp() { return this.spedUp.get(); }
+
+    public Direction getDirection() { return this.direction; }
 
     @Override
-    public void bombExploded(Bomb bomb){
-        this.bombs.add(bomb);
-    }
+    public void bombExploded(Vector2d position){ addBomb();}
 
-    @Override
+
     public void triedToPutBomb(){
         if(!this.bombs.isEmpty()){
             Bomb bomb = this.bombs.pop();
+            System.out.println(this.bombs.size());
             if(!this.map.putBomb(this, bomb))
                 this.bombs.add(bomb);
+        }
+        if(this.hasSniperGloves.get()){
+            this.map.moveBomb(this);
         }
     }
 
     public void bombReached() {
-        if(!this.hasShield)
+        if(!this.hasShield.get())
             this.health = this.health.decreasedHealth();
         if(this.health == Health.DEAD){
-            //END GAME
+            for(IPlayerDiedObserver observer : this.observers)
+                observer.playerDied(this);
         }
     }
 
+    public void addIPlayerDiedObserver(IPlayerDiedObserver observer) {
+        this.observers.add(observer);
+    }
+
+    public void removeIPlayerDiedObserver(IPlayerDiedObserver observer) {
+        this.observers.remove(observer);
+    }
+
     public void turnedIntoGhost() {
-        this.isGhost = true;
+        this.isGhost.set(true);
     }
 
     public void turnedIntoHuman() {
-        this.isGhost = false;
+        this.isGhost.set(false);
     }
 
     public void grabbedShield() {
-        this.hasShield = true;
+        this.hasShield.set(true);
     }
 
     public void lostShield() {
-        this.hasShield = false;
+        this.hasShield.set(false);
     }
 
     public void grabbedSniperGloves() {
-        this.hasSniperGloves = true;
+        this.hasSniperGloves.set(true);
     }
 
+    public void spedUp() {
+        this.spedUp.set(true);
+    }
+
+    public void grabbedPocket() {
+        this.pocketsNum.getAndAdd(1);
+        addBomb();
+    }
+
+    public boolean equals(Object other){
+        return other == this;
+    }
+
+    public int hashCode() { return Objects.hash(); }
+
+    public String toString() { return "player"; }
 }
