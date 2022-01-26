@@ -64,13 +64,11 @@ public class App extends Application implements IPlayerDiedObserver {
         });
     }
 
-
     private void triedToMove(Player player, Direction direction) {
         for(ITriedToMoveObserver observer : this.moveObservers){
             observer.tiredToMove(player, direction);
         }
     }
-
 
     public void setScene() {
         Platform.runLater(()->{
@@ -81,7 +79,6 @@ public class App extends Application implements IPlayerDiedObserver {
             keyboardHandlers();
         });
     }
-
 
     private void drawFrame() {
         this.gridPane.add(this.mapElem.getBox(wall), 0, 0);
@@ -134,6 +131,7 @@ public class App extends Application implements IPlayerDiedObserver {
 
     @Override
     public void playerDied(Player player) {
+        System.exit(0);
     }
 
     public void keyboardHandlers() {

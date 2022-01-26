@@ -45,7 +45,6 @@ public class GameMap implements ITriedToMoveObserver, IBombExplodedObserver {
         int dx = this.lowerRight.x - this.upperLeft.x + 2;
         int dy = this.lowerRight.y - this.upperLeft.y + 2;
         for(int i = 0; i < 90; i++) {
-            System.out.println(i);
             Vector2d position = new Vector2d(random.nextInt(dx), random.nextInt(dy));
             if(isOccupied(position))
                 i--;
@@ -147,18 +146,22 @@ public class GameMap implements ITriedToMoveObserver, IBombExplodedObserver {
 
     @Override
     public void bombExploded(Vector2d position) {
+        Player player = playerAt(position);
+        if(player != null)
+            player.bombReached();
+
         for(Direction direction : bombRange) {
-            destroyChest(position.add(direction.tuUnitVector()));
+            Vector2d rangePosition = position.add(direction.tuUnitVector());
+            destroyChest(rangePosition);
+            player = playerAt(rangePosition);
+            if(player != null)
+                player.bombReached();
         }
         this.bombs.remove(position);
     }
 
     public void destroyChest(Vector2d position) {
         if(this.chests.containsKey(position)) {
-            Player player = playerAt(position);
-            if(player != null) {
-                player.bombReached();
-            }
             this.chests.remove(position);
             if(Math.random() <= 0.3) {
                 generateRandomPowerUp(position);
@@ -192,6 +195,7 @@ public class GameMap implements ITriedToMoveObserver, IBombExplodedObserver {
         if(newBombPosition.precedes(this.lowerRight)) {
             this.bombs.remove(bombPosition, bomb);
             this.bombs.put(newBombPosition, bomb);
+            bomb.addPosition(newBombPosition);
         }
     }
 

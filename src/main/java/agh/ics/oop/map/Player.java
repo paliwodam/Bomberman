@@ -76,7 +76,6 @@ public class Player implements ITriedToMoveObserver, IBombExplodedObserver {
     public void triedToPutBomb(){
         if(!this.bombs.isEmpty()){
             Bomb bomb = this.bombs.pop();
-            System.out.println(this.bombs.size());
             if(!this.map.putBomb(this, bomb))
                 this.bombs.add(bomb);
         }

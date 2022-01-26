@@ -42,6 +42,11 @@ public class MapGuiElement {
         if(object == null) {
             hBox.getChildren().add(new ImageView(this.emptyImage));
         }
+        else if(object instanceof Player) {
+            ImageView imageView = new ImageView(this.images.get(object));
+            imageView.setRotate(((Player) object).getDirection().ordinal()*90);
+            hBox.getChildren().add(imageView);
+        }
         else {
             hBox.getChildren().add(new ImageView(this.images.get(object)));
         }
@@ -50,35 +55,43 @@ public class MapGuiElement {
 
     public HBox playerEquipmentBox(Player player) {
         HBox hBox = new HBox();
-        hBox.setMaxHeight(0.5*size);
 
         for(int i = 0; i < player.getHealthPoints(); i++) {
             ImageView imageView = new ImageView(this.heartImage);
-            imageView.maxHeight(20);
+            imageView.setFitHeight(20);
+            imageView.setPreserveRatio(true);
             hBox.getChildren().add(imageView);
         }
 
         for(int i = 0; i < player.getPocketsNum(); i++){
             ImageView imageView = new ImageView(this.images.get(this.pocket));
-            imageView.maxHeight(20);
+            imageView.setFitHeight(20);
             hBox.getChildren().add(imageView);
         }
 
         if(player.isGhost()){
             ImageView imageView = new ImageView(this.images.get(this.ghost));
-            imageView.maxHeight(20);
+            imageView.setFitHeight(20);
             hBox.getChildren().add(imageView);
         }
 
-        if(player.hasGloves())
-            hBox.getChildren().add((new ImageView(this.images.get(this.gloves))));
+        if(player.hasGloves()) {
+            ImageView imageView = new ImageView(this.images.get(this.gloves));
+            imageView.setFitHeight(20);
+            hBox.getChildren().add(imageView);
+        }
 
-        if(player.hasShield())
-            hBox.getChildren().add((new ImageView(this.images.get(this.shield))));
+        if(player.hasShield()) {
+            ImageView imageView = new ImageView(this.images.get(this.shield));
+            imageView.setFitHeight(20);
+            hBox.getChildren().add(imageView);
+        }
 
-        if(player.hasSpeedUp())
-            hBox.getChildren().add((new ImageView(this.images.get(this.speedUp))));
-
+        if(player.hasSpeedUp()) {
+            ImageView imageView = new ImageView(this.images.get(this.speedUp));
+            imageView.setFitHeight(20);
+            hBox.getChildren().add(imageView);
+        }
         return hBox;
     }
 

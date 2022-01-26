@@ -2,14 +2,14 @@ package agh.ics.oop.map;
 
 public enum Direction {
     UP,
-    DOWN,
     RIGHT,
+    DOWN,
     LEFT;
 
     private static final Vector2d[] dVector2d = {
             new Vector2d(0, -1),
-            new Vector2d(0, 1),
             new Vector2d(1, 0),
+            new Vector2d(0, 1),
             new Vector2d(-1, 0)
     };
 
