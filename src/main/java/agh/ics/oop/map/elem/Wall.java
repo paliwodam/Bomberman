@@ -1,11 +1,8 @@
 package agh.ics.oop.map.elem;
 
-import agh.ics.oop.map.Vector2d;
-import agh.ics.oop.map.powerup.Ghost;
-
 import java.util.Objects;
 
-public class Wall {
+public class Wall extends AbstractMapElement {
     public boolean equals(Object other) {
         return (other instanceof Wall);
     }

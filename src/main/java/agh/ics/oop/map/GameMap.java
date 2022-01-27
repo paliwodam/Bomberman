@@ -1,11 +1,8 @@
 package agh.ics.oop.map;
 
 import agh.ics.oop.gui.ITriedToMoveObserver;
-import agh.ics.oop.map.elem.Bomb;
-import agh.ics.oop.map.elem.Chest;
-import agh.ics.oop.map.elem.IBombExplodedObserver;
-import agh.ics.oop.map.elem.Wall;
-import agh.ics.oop.map.powerup.*;
+import agh.ics.oop.map.elem.*;
+import agh.ics.oop.map.elem.powerup.*;
 import java.util.*;
 
 public class GameMap implements ITriedToMoveObserver, IBombExplodedObserver {
@@ -14,10 +11,11 @@ public class GameMap implements ITriedToMoveObserver, IBombExplodedObserver {
     private final Vector2d upperLeft;
     private final Vector2d lowerRight;
     private final Wall wall = new Wall();
-    private final Map<Vector2d, Wall> walls = new LinkedHashMap<>();
-    private final Map<Vector2d, Chest> chests = new LinkedHashMap<>();
+
+    private final Map<Vector2d, AbstractMapElement> mapElements = new LinkedHashMap<>();
+
     private final Map<Vector2d, IPowerUp> powerUps = new LinkedHashMap<>();
-    private final Map<Vector2d, Bomb> bombs = new LinkedHashMap<>();
+
     private final Map<Player, Vector2d> playersPositions = new LinkedHashMap<>();
 
     private final static Direction[] bombRange = {Direction.UP, Direction.LEFT, Direction.DOWN, Direction.RIGHT};
@@ -36,7 +34,7 @@ public class GameMap implements ITriedToMoveObserver, IBombExplodedObserver {
 
         for(int i = start.x; i <= end.x; i+=2) {
             for(int j = start.y; j <= end.y; j+=2) {
-                this.walls.put(new Vector2d(i, j), wall);
+                this.mapElements.put(new Vector2d(i, j), wall);
             }
         }
     }
@@ -59,7 +57,7 @@ public class GameMap implements ITriedToMoveObserver, IBombExplodedObserver {
             else if(position.equals(this.upperLeft.add(Direction.DOWN.tuUnitVector())))
                 i--;
             else
-                this.chests.put(position, new Chest());
+                this.mapElements.put(position, new Chest());
         }
     }
 
@@ -67,30 +65,14 @@ public class GameMap implements ITriedToMoveObserver, IBombExplodedObserver {
         Object object = playerAt(position);
         if(object != null)
             return object;
-        object = this.walls.get(position);
-        if(object != null)
-            return object;
-        object = this.chests.get(position);
-        if(object != null)
-            return object;
-        object = this.bombs.get(position);
-        if(object != null)
-            return object;
         object = this.powerUps.get(position);
-        return object;
+        if(object != null)
+            return object;
+        return this.mapElements.get(position);
     }
 
     public boolean isOccupied(Vector2d position) {
-        if(this.walls.containsKey(position))
-            return true;
-
-        if(this.chests.containsKey(position))
-            return true;
-
-        if(this.bombs.containsKey(position))
-            return true;
-
-        return false;
+        return this.mapElements.containsKey(position);
     }
 
     public boolean canMoveTo(Vector2d position) {
@@ -127,7 +109,7 @@ public class GameMap implements ITriedToMoveObserver, IBombExplodedObserver {
         if(isOccupied(position))
             return false;
 
-        this.bombs.put(position, bomb);
+        this.mapElements.put(position, bomb);
         bomb.addPosition(position);
         bomb.addIBombExplodedObserver(this);
         bomb.placed();
@@ -157,12 +139,12 @@ public class GameMap implements ITriedToMoveObserver, IBombExplodedObserver {
             if(player != null)
                 player.bombReached();
         }
-        this.bombs.remove(position);
+        this.mapElements.remove(position);
     }
 
     public void destroyChest(Vector2d position) {
-        if(this.chests.containsKey(position)) {
-            this.chests.remove(position);
+        if(this.mapElements.get(position) instanceof Chest) {
+            this.mapElements.remove(position);
             if(Math.random() <= 0.3) {
                 generateRandomPowerUp(position);
             }
@@ -177,25 +159,25 @@ public class GameMap implements ITriedToMoveObserver, IBombExplodedObserver {
 
     public void moveBomb(Player player) {
         Vector2d displacement = player.getDirection().tuUnitVector();
-        Vector2d bombPosition = this.playersPositions.get(player).add(displacement);
+        Vector2d position = this.playersPositions.get(player).add(displacement);
 
-        Bomb bomb = this.bombs.get(bombPosition);
-        if(bomb == null)
+        if(!(this.mapElements.get(position) instanceof Bomb))
             return;
 
-        Vector2d newBombPosition = bombPosition;
+        Bomb bomb = (Bomb) this.mapElements.get(position);
+        Vector2d newPosition = position;
         for(int i = 0; i < 3; i++) {
-            newBombPosition = newBombPosition.add(displacement);
+            newPosition = newPosition.add(displacement);
         }
 
-        while(isOccupied(newBombPosition) || playerAt(newBombPosition) != null) {
-            newBombPosition = newBombPosition.add(displacement);
+        while(isOccupied(newPosition) || playerAt(newPosition) != null) {
+            newPosition = newPosition.add(displacement);
         }
 
-        if(newBombPosition.precedes(this.lowerRight)) {
-            this.bombs.remove(bombPosition, bomb);
-            this.bombs.put(newBombPosition, bomb);
-            bomb.addPosition(newBombPosition);
+        if(newPosition.precedes(this.lowerRight)) {
+            this.mapElements.remove(position, bomb);
+            this.mapElements.put(newPosition, bomb);
+            bomb.addPosition(newPosition);
         }
     }
 

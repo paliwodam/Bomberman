@@ -8,7 +8,7 @@ import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class Bomb {
+public class Bomb extends AbstractMapElement {
     private Vector2d position;
     private final static Timer timer = new Timer(false);
     private final ArrayList<IBombExplodedObserver> observers = new ArrayList<>();

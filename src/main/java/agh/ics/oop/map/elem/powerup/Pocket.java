@@ -1,4 +1,4 @@
-package agh.ics.oop.map.powerup;
+package agh.ics.oop.map.elem.powerup;
 
 import agh.ics.oop.map.Player;
 

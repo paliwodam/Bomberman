@@ -1,4 +1,4 @@
-package agh.ics.oop.map.powerup;
+package agh.ics.oop.map.elem.powerup;
 
 import agh.ics.oop.map.Player;
 
@@ -10,13 +10,16 @@ public class SpeedUp implements IPowerUp{
         player.spedUp();
     }
 
+    @Override
     public boolean equals(Object other) {
         return (other instanceof SpeedUp);
     }
 
+    @Override
     public int hashCode(){
         return Objects.hash();
     }
 
+    @Override
     public String toString() { return "speedUp"; }
 }

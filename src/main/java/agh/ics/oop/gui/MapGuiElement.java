@@ -1,11 +1,10 @@
 package agh.ics.oop.gui;
 
 import agh.ics.oop.map.Player;
-import agh.ics.oop.map.Vector2d;
 import agh.ics.oop.map.elem.Bomb;
 import agh.ics.oop.map.elem.Chest;
 import agh.ics.oop.map.elem.Wall;
-import agh.ics.oop.map.powerup.*;
+import agh.ics.oop.map.elem.powerup.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
@@ -14,7 +13,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Set;
 
 public class MapGuiElement {
     private final Ghost ghost = new Ghost();
@@ -27,18 +25,19 @@ public class MapGuiElement {
     private Image emptyImage;
     private Image heartImage;
 
-    private final int size;
+    private final int cellSize;
+    private static final int equipmentSize = 30;
 
 
     public MapGuiElement(Player player1, Player player2, int cellSize) {
-        this.size = cellSize;
+        this.cellSize = cellSize;
         getImages(player1, player2);
     }
 
     public HBox getBox(Object object) {
         HBox hBox = new HBox();
-        hBox.maxHeight(size);
-        hBox.minHeight(size);
+        hBox.maxHeight(cellSize);
+        hBox.minHeight(cellSize);
         if(object == null) {
             hBox.getChildren().add(new ImageView(this.emptyImage));
         }
@@ -58,38 +57,44 @@ public class MapGuiElement {
 
         for(int i = 0; i < player.getHealthPoints(); i++) {
             ImageView imageView = new ImageView(this.heartImage);
-            imageView.setFitHeight(20);
+            imageView.setFitHeight(equipmentSize);
+            imageView.setFitWidth(equipmentSize);
             imageView.setPreserveRatio(true);
             hBox.getChildren().add(imageView);
         }
 
         for(int i = 0; i < player.getPocketsNum(); i++){
             ImageView imageView = new ImageView(this.images.get(this.pocket));
-            imageView.setFitHeight(20);
+            imageView.setFitHeight(equipmentSize);
+            imageView.setFitWidth(equipmentSize);
             hBox.getChildren().add(imageView);
         }
 
         if(player.isGhost()){
             ImageView imageView = new ImageView(this.images.get(this.ghost));
-            imageView.setFitHeight(20);
+            imageView.setFitHeight(equipmentSize);
+            imageView.setFitWidth(equipmentSize);
             hBox.getChildren().add(imageView);
         }
 
         if(player.hasGloves()) {
             ImageView imageView = new ImageView(this.images.get(this.gloves));
-            imageView.setFitHeight(20);
+            imageView.setFitHeight(equipmentSize);
+            imageView.setFitWidth(equipmentSize);
             hBox.getChildren().add(imageView);
         }
 
         if(player.hasShield()) {
             ImageView imageView = new ImageView(this.images.get(this.shield));
-            imageView.setFitHeight(20);
+            imageView.setFitHeight(equipmentSize);
+            imageView.setFitWidth(equipmentSize);
             hBox.getChildren().add(imageView);
         }
 
         if(player.hasSpeedUp()) {
             ImageView imageView = new ImageView(this.images.get(this.speedUp));
-            imageView.setFitHeight(20);
+            imageView.setFitHeight(equipmentSize);
+            imageView.setFitWidth(equipmentSize);
             hBox.getChildren().add(imageView);
         }
         return hBox;
