@@ -1,3 +1,5 @@
+package agh.ic.oop;
+
 import agh.ics.oop.map.Vector2d;
 import org.junit.jupiter.api.Test;
 

@@ -52,8 +52,6 @@ public class App extends Application implements IPlayerDiedObserver {
         this.lastMoveTime.put(player2, LocalDateTime.now());
         this.coolDownTime.put(player1, 0);
         this.coolDownTime.put(player2, 0);
-
-
     }
 
     @Override
@@ -72,7 +70,7 @@ public class App extends Application implements IPlayerDiedObserver {
     }
 
     private void triedToMove(Player player, Direction direction) {
-        if(this.lastMoveTime.get(player).plusNanos(this.coolDownTime.get(player)).compareTo(LocalDateTime.now()) <= 0) {
+        if(this.lastMoveTime.get(player).plusSeconds(this.coolDownTime.get(player)).compareTo(LocalDateTime.now()) <= 0) {
             for (ITriedToMoveObserver observer : this.moveObservers) {
                 observer.tiredToMove(player, direction);
             }
@@ -94,7 +92,6 @@ public class App extends Application implements IPlayerDiedObserver {
     public void keyboardHandlers() {
         this.scene.setOnKeyPressed(event -> {
             switch (event.getCode()) {
-
 
                 case M -> player2.triedToPutBomb();
 

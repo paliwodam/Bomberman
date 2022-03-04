@@ -7,6 +7,7 @@ import java.util.*;
 
 public class GameMap implements ITriedToMoveObserver, IBombExplodedObserver {
     private static final Random random = new Random();
+    public static final int chestNum = 90;
 
     private final Vector2d upperLeft;
     private final Vector2d lowerRight;
@@ -22,6 +23,12 @@ public class GameMap implements ITriedToMoveObserver, IBombExplodedObserver {
 
 
     public GameMap(Vector2d upperLeft, Vector2d lowerRight) {
+        if((lowerRight.x - upperLeft.x) < 2 || (lowerRight.y - upperLeft.y) < 2)
+            throw new IllegalArgumentException("Incorrect map coordinates, map must be bigger");
+
+        if((lowerRight.x - upperLeft.x) % 2 != 0 || (lowerRight.y - upperLeft.y) % 2 != 0)
+            throw new IllegalArgumentException("Incorrect map coordinates, map must be symmetrical");
+
         this.upperLeft = upperLeft;
         this.lowerRight = lowerRight;
         fillWithWalls();
@@ -40,10 +47,12 @@ public class GameMap implements ITriedToMoveObserver, IBombExplodedObserver {
     }
 
     private void fillWithChests() {
-        int dx = this.lowerRight.x - this.upperLeft.x + 2;
-        int dy = this.lowerRight.y - this.upperLeft.y + 2;
-        for(int i = 0; i < 90; i++) {
-            Vector2d position = new Vector2d(random.nextInt(dx), random.nextInt(dy));
+        int dx = this.lowerRight.x - this.upperLeft.x + 1;
+        int dy = this.lowerRight.y - this.upperLeft.y + 1;
+
+        for(int i = 0; i < chestNum; i++) {
+            Vector2d position = new Vector2d(random.nextInt(dx) + this.upperLeft.x,
+                                             random.nextInt(dy) + this.upperLeft.y);
             if(isOccupied(position))
                 i--;
             else if(position.equals(this.lowerRight) || position.equals(this.upperLeft))
