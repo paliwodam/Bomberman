@@ -12,11 +12,11 @@ public class Vector2dTest {
         Vector2d position2 = new Vector2d(-2,1);
         Vector2d position3 = new Vector2d(1, 2);
         String string = "test";
-        assertTrue(position1.equals(position1));
-        assertFalse(position1.equals(position2));
-        assertTrue(position1.equals(position3));
-        assertFalse(position1.equals(string));
-        assertFalse(position1.equals(null));
+        assertEquals(position1, position1);
+        assertNotEquals(position2, position1);
+        assertEquals(position3, position1);
+        assertNotEquals(string, position1);
+        assertNotNull(position1);
     }
 
     @Test

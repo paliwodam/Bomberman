@@ -7,15 +7,15 @@ import java.util.*;
 
 public class GameMap implements ITriedToMoveObserver, IBombExplodedObserver {
     private static final Random random = new Random();
-    public static final int chestNum = 90;
+    public static final int chestsNum = 90;
 
-    private final Vector2d upperLeft;
-    private final Vector2d lowerRight;
+    protected final Vector2d upperLeft;
+    protected final Vector2d lowerRight;
     private final Wall wall = new Wall();
 
-    private final Map<Vector2d, AbstractMapElement> mapElements = new LinkedHashMap<>();
+    protected final Map<Vector2d, AbstractMapElement> mapElements = new LinkedHashMap<>();
 
-    private final Map<Vector2d, IPowerUp> powerUps = new LinkedHashMap<>();
+    protected final Map<Vector2d, IPowerUp> powerUps = new LinkedHashMap<>();
 
     private final Map<Player, Vector2d> playersPositions = new LinkedHashMap<>();
 
@@ -50,10 +50,10 @@ public class GameMap implements ITriedToMoveObserver, IBombExplodedObserver {
         int dx = this.lowerRight.x - this.upperLeft.x + 1;
         int dy = this.lowerRight.y - this.upperLeft.y + 1;
 
-        for(int i = 0; i < chestNum; i++) {
+        for(int i = 0; i < chestsNum; i++) {
             Vector2d position = new Vector2d(random.nextInt(dx) + this.upperLeft.x,
                                              random.nextInt(dy) + this.upperLeft.y);
-            if(isOccupied(position))
+            if(isOccupiedByMapElements(position))
                 i--;
             else if(position.equals(this.lowerRight) || position.equals(this.upperLeft))
                 i--;
@@ -80,21 +80,21 @@ public class GameMap implements ITriedToMoveObserver, IBombExplodedObserver {
         return this.mapElements.get(position);
     }
 
-    public boolean isOccupied(Vector2d position) {
+    public boolean isOccupiedByMapElements(Vector2d position) {
         return this.mapElements.containsKey(position);
     }
 
     public boolean canMoveTo(Vector2d position) {
-        if(isOccupied(position))
+        if(isOccupiedByMapElements(position))
             return false;
 
         if(this.playersPositions.containsValue(position))
             return false;
 
-        return isNotOutOfMap(position);
+        return isInsideMap(position);
     }
 
-    public boolean isNotOutOfMap(Vector2d position) {
+    public boolean isInsideMap(Vector2d position) {
         return position.follows(upperLeft) && position.precedes(this.lowerRight);
     }
 
@@ -102,7 +102,7 @@ public class GameMap implements ITriedToMoveObserver, IBombExplodedObserver {
     public void tiredToMove(Player player, Direction direction) {
         Vector2d position = this.playersPositions.get(player).add(direction.tuUnitVector());
 
-        if(canMoveTo(position) || (player.isGhost() && isNotOutOfMap(position))) {
+        if(canMoveTo(position) || (player.isGhost() && isInsideMap(position))) {
             this.playersPositions.replace(player, position);
 
             IPowerUp powerUp = this.powerUps.get(position);
@@ -115,7 +115,7 @@ public class GameMap implements ITriedToMoveObserver, IBombExplodedObserver {
 
     public boolean putBomb(Player player, Bomb bomb) {
         Vector2d position = this.playersPositions.get(player);
-        if(isOccupied(position))
+        if(isOccupiedByMapElements(position))
             return false;
 
         this.mapElements.put(position, bomb);
@@ -151,7 +151,7 @@ public class GameMap implements ITriedToMoveObserver, IBombExplodedObserver {
         this.mapElements.remove(position);
     }
 
-    public void destroyChest(Vector2d position) {
+    private void destroyChest(Vector2d position) {
         if(this.mapElements.get(position) instanceof Chest) {
             this.mapElements.remove(position);
             if(Math.random() <= 0.3) {
@@ -160,18 +160,18 @@ public class GameMap implements ITriedToMoveObserver, IBombExplodedObserver {
         }
     }
 
-    public void generateRandomPowerUp(Vector2d position) {
+    private void generateRandomPowerUp(Vector2d position) {
         IPowerUp[] availablePowerUps = {new Ghost(), new Shield(), new SniperGloves(), new Pocket(), new SpeedUp()};
         int n = availablePowerUps.length;
         this.powerUps.put(position, availablePowerUps[random.nextInt(n)]);
     }
 
-    public void moveBomb(Player player) {
+    public boolean moveBomb(Player player) {
         Vector2d displacement = player.getDirection().tuUnitVector();
         Vector2d position = this.playersPositions.get(player).add(displacement);
 
         if(!(this.mapElements.get(position) instanceof Bomb))
-            return;
+            return false;
 
         Bomb bomb = (Bomb) this.mapElements.get(position);
         Vector2d newPosition = position;
@@ -179,15 +179,17 @@ public class GameMap implements ITriedToMoveObserver, IBombExplodedObserver {
             newPosition = newPosition.add(displacement);
         }
 
-        while(isOccupied(newPosition) || playerAt(newPosition) != null) {
+        while(isOccupiedByMapElements(newPosition) || playerAt(newPosition) != null) {
             newPosition = newPosition.add(displacement);
         }
 
-        if(newPosition.precedes(this.lowerRight)) {
+        if(newPosition.precedes(this.lowerRight) && newPosition.follows(this.upperLeft)) {
             this.mapElements.remove(position, bomb);
             this.mapElements.put(newPosition, bomb);
             bomb.addPosition(newPosition);
+            return true;
         }
+        return false;
     }
 
     public void addPlayers(Player player1, Player player2) {

@@ -74,13 +74,14 @@ public class Player implements ITriedToMoveObserver, IBombExplodedObserver {
 
 
     public void triedToPutBomb(){
+
+        if(this.hasSniperGloves.get() && this.map.moveBomb(this))
+            return;
+
         if(!this.bombs.isEmpty()){
             Bomb bomb = this.bombs.pop();
             if(!this.map.putBomb(this, bomb))
                 this.bombs.add(bomb);
-        }
-        if(this.hasSniperGloves.get()){
-            this.map.moveBomb(this);
         }
     }
 
