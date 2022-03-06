@@ -17,7 +17,7 @@ public class GameMap implements ITriedToMoveObserver, IBombExplodedObserver {
 
     protected final Map<Vector2d, IPowerUp> powerUps = new LinkedHashMap<>();
 
-    private final Map<Player, Vector2d> playersPositions = new LinkedHashMap<>();
+    protected final Map<Player, Vector2d> playersPositions = new LinkedHashMap<>();
 
     private final static Direction[] bombRange = {Direction.UP, Direction.LEFT, Direction.DOWN, Direction.RIGHT};
 

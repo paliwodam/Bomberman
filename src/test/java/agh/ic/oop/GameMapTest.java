@@ -402,7 +402,116 @@ public class GameMapTest {
     }
 
     @Test
-    public void isNotOutOfMap() {
+    public void testIsInsideMap() {
+        int min_ = 1;
+        int max_ = 13;
 
+        Vector2d upperLeft = new Vector2d(min_, min_);
+        Vector2d lowerRight = new Vector2d(max_, max_);
+
+        GameMap gameMap = new GameMap(upperLeft, lowerRight);
+
+        assertTrue(gameMap.isInsideMap(new Vector2d(1, 1)));
+        assertTrue(gameMap.isInsideMap(new Vector2d(4, 11)));
+        assertTrue(gameMap.isInsideMap(new Vector2d(13, 13)));
+        assertTrue(gameMap.isInsideMap(new Vector2d(12, 13)));
+        assertTrue(gameMap.isInsideMap(new Vector2d(10, 5)));
+        assertTrue(gameMap.isInsideMap(new Vector2d(1, 5)));
+
+        assertFalse(gameMap.isInsideMap(new Vector2d(0, 0)));
+        assertFalse(gameMap.isInsideMap(new Vector2d(0, 8)));
+        assertFalse(gameMap.isInsideMap(new Vector2d(-3, -2)));
+        assertFalse(gameMap.isInsideMap(new Vector2d(2, 0)));
+        assertFalse(gameMap.isInsideMap(new Vector2d(14, 14)));
+        assertFalse(gameMap.isInsideMap(new Vector2d(14, 12)));
+        assertFalse(gameMap.isInsideMap(new Vector2d(11, 14)));
+        assertFalse(gameMap.isInsideMap(new Vector2d(15, 16)));
     }
+
+    @Test
+    public void testTriedToMove() {
+        int min_ = 1;
+        int max_ = 13;
+
+        Vector2d upperLeft = new Vector2d(min_, min_);
+        Vector2d lowerRight = new Vector2d(max_, max_);
+
+        GameMapMock gameMap = null;
+        try {
+            gameMap = new GameMapMock(upperLeft, lowerRight);
+        } catch (FileNotFoundException exception) {
+            exception.printStackTrace();
+        }
+
+        assert gameMap != null;
+
+        Player player1 = new Player(gameMap);
+        Player player2 = new Player(gameMap);
+        gameMap.addPlayers(player1, player2);
+
+        Vector2d position1 = upperLeft;
+        Vector2d position2 = lowerRight;
+        gameMap.tiredToMove(player1, Direction.UP);
+        assertNull(gameMap.objectAt(position1.add(Direction.UP.tuUnitVector())));
+        assertEquals(player1, gameMap.objectAt(position1));
+        assertEquals(player2, gameMap.objectAt(position2));
+
+        position1 = position1.add(Direction.RIGHT.tuUnitVector());
+        gameMap.tiredToMove(player1, Direction.RIGHT);
+        assertNull(gameMap.objectAt(upperLeft));
+        assertEquals(player1, gameMap.objectAt(position1));
+        assertEquals(player2, gameMap.objectAt(position2));
+
+        gameMap.tiredToMove(player1, Direction.DOWN);
+        assertNull(gameMap.objectAt(upperLeft));
+        assertNotEquals(player1, gameMap.objectAt(position1.add(Direction.DOWN.tuUnitVector())));
+        assertEquals(player1, gameMap.objectAt(position1));
+        assertEquals(player2, gameMap.objectAt(position2));
+
+        gameMap.tiredToMove(player2, Direction.RIGHT);
+        assertNull(gameMap.objectAt(position2.add(Direction.RIGHT.tuUnitVector())));
+        assertEquals(player2, gameMap.objectAt(position2));
+        assertEquals(player1, gameMap.objectAt(position1));
+
+        position2 = position2.add(Direction.UP.tuUnitVector());
+        gameMap.tiredToMove(player2, Direction.UP);
+        assertNull(gameMap.objectAt(lowerRight));
+        assertEquals(player2, gameMap.objectAt(position2));
+        assertEquals(player1, gameMap.objectAt(position1));
+
+        gameMap.tiredToMove(player2, Direction.LEFT);
+        assertNull(gameMap.objectAt(lowerRight));
+        assertEquals(player2, gameMap.objectAt(position2));
+        assertEquals(player1, gameMap.objectAt(position1));
+        assertNotEquals(player2, gameMap.objectAt(position2.add(Direction.LEFT.tuUnitVector())));
+
+        position2 = position2.add(Direction.UP.tuUnitVector());
+        gameMap.tiredToMove(player2, Direction.UP);
+        assertNull(gameMap.objectAt(lowerRight));
+        assertNull(gameMap.objectAt(position2.subtract(Direction.UP.tuUnitVector())));
+        assertEquals(player2, gameMap.objectAt(position2));
+        assertEquals(player1, gameMap.objectAt(position1));
+
+
+        player1.turnedIntoGhost();
+
+        gameMap.tiredToMove(player1, Direction.UP);
+        assertNull(gameMap.objectAt(position1.add(Direction.UP.tuUnitVector())));
+        assertNull(gameMap.objectAt(upperLeft));
+        assertEquals(player1, gameMap.objectAt(position1));
+        assertEquals(player2, gameMap.objectAt(position2));
+
+        position1 = position1.add(Direction.DOWN.tuUnitVector());
+        gameMap.tiredToMove(player1, Direction.DOWN);
+        assertEquals(player1, gameMap.objectAt(position1));
+        assertEquals(player2, gameMap.objectAt(position2));
+        assertNull(gameMap.objectAt(position1.subtract(Direction.DOWN.tuUnitVector())));
+
+        position1 = position1.add(Direction.DOWN.tuUnitVector());
+        gameMap.tiredToMove(player1, Direction.DOWN);
+        assertNotEquals(player1, gameMap.objectAt(position1.subtract(Direction.DOWN.tuUnitVector())));
+        assertEquals(player1, gameMap.objectAt(position1));
+        assertEquals(player2, gameMap.objectAt(position2));
+    }
+
 }

@@ -14,7 +14,7 @@ public class Player implements ITriedToMoveObserver, IBombExplodedObserver {
     private Health health;
     private Direction direction;
     private final GameMap map;
-    private final LinkedList<Bomb> bombs = new LinkedList<>();
+    protected final LinkedList<Bomb> bombs = new LinkedList<>();
     private final ArrayList<IPlayerDiedObserver> observers = new ArrayList<>();
 
     private final AtomicBoolean isGhost;
@@ -53,7 +53,7 @@ public class Player implements ITriedToMoveObserver, IBombExplodedObserver {
         }
     }
 
-    public int getHealthPoints() { return this.health.idx; }
+    public Health getHealth() { return this.health; }
 
     public int getPocketsNum() { return this.pocketsNum.get(); }
 
@@ -74,7 +74,6 @@ public class Player implements ITriedToMoveObserver, IBombExplodedObserver {
 
 
     public void triedToPutBomb(){
-
         if(this.hasSniperGloves.get() && this.map.moveBomb(this))
             return;
 

@@ -55,7 +55,7 @@ public class MapGuiElement {
     public HBox playerEquipmentBox(Player player) {
         HBox hBox = new HBox();
 
-        for(int i = 0; i < player.getHealthPoints(); i++) {
+        for(int i = 0; i < player.getHealth().idx; i++) {
             ImageView imageView = new ImageView(this.heartImage);
             imageView.setFitHeight(equipmentSize);
             imageView.setFitWidth(equipmentSize);
