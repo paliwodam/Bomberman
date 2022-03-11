@@ -468,6 +468,9 @@ public class GameMapTest {
         assertEquals(player1, gameMap.objectAt(position1));
         assertEquals(player2, gameMap.objectAt(position2));
 
+
+
+
         gameMap.tiredToMove(player2, Direction.RIGHT);
         assertNull(gameMap.objectAt(position2.add(Direction.RIGHT.tuUnitVector())));
         assertEquals(player2, gameMap.objectAt(position2));
@@ -485,12 +488,6 @@ public class GameMapTest {
         assertEquals(player1, gameMap.objectAt(position1));
         assertNotEquals(player2, gameMap.objectAt(position2.add(Direction.LEFT.tuUnitVector())));
 
-        position2 = position2.add(Direction.UP.tuUnitVector());
-        gameMap.tiredToMove(player2, Direction.UP);
-        assertNull(gameMap.objectAt(lowerRight));
-        assertNull(gameMap.objectAt(position2.subtract(Direction.UP.tuUnitVector())));
-        assertEquals(player2, gameMap.objectAt(position2));
-        assertEquals(player1, gameMap.objectAt(position1));
 
 
         player1.turnedIntoGhost();

@@ -5,6 +5,7 @@ import agh.ics.oop.map.elem.Bomb;
 import agh.ics.oop.map.elem.powerup.Ghost;
 import agh.ics.oop.map.elem.powerup.Pocket;
 import agh.ics.oop.map.elem.powerup.Shield;
+import agh.ics.oop.map.elem.powerup.SniperGloves;
 import agh.ics.oop.mock.GameMapMock;
 import agh.ics.oop.mock.PlayerMock;
 import org.junit.jupiter.api.Test;
@@ -14,7 +15,7 @@ import java.io.FileNotFoundException;
 import static org.junit.jupiter.api.Assertions.*;
 
 
-public class PowerUpsTests {
+public class PowerUpsTest {
     @Test
     public void testGhost() throws InterruptedException {
         int min_ = 1;
@@ -197,8 +198,50 @@ public class PowerUpsTests {
     }
 
     @Test
-    public void testSniperGloves() {
-        //TODO
+    public void testSniperGloves() {int min_ = 1;
+        int max_ = 13;
+
+        Vector2d upperLeft = new Vector2d(min_, min_);
+        Vector2d lowerRight = new Vector2d(max_, max_);
+
+        GameMapMock gameMap = null;
+        try {
+            gameMap = new GameMapMock(upperLeft, lowerRight);
+        } catch (FileNotFoundException exception) {
+            exception.printStackTrace();
+        }
+
+        assert gameMap != null;
+
+        Player player1 = new Player(gameMap);
+        Player player2 = new Player(gameMap);
+        gameMap.addPlayers(player1, player2);
+
+        Vector2d bombPosition = lowerRight.add(Direction.UP.tuUnitVector());
+        Vector2d bombShiftedPosition = bombPosition;
+        Bomb bomb = new Bomb();
+
+        gameMap.tiredToMove(player2, Direction.UP);
+        player2.triedToPutBomb();
+        gameMap.tiredToMove(player2, Direction.DOWN);
+        gameMap.tiredToMove(player2, Direction.UP);
+        player2.triedToPutBomb();
+
+        bombShiftedPosition = bombShiftedPosition.add(Direction.UP.tuUnitVector());
+        bombShiftedPosition = bombShiftedPosition.add(Direction.UP.tuUnitVector());
+        bombShiftedPosition = bombShiftedPosition.add(Direction.UP.tuUnitVector());
+
+        assertEquals(player2, gameMap.objectAt(lowerRight));
+        assertEquals(bomb, gameMap.objectAt(bombPosition));
+        assertNotEquals(bomb, gameMap.objectAt(bombShiftedPosition));
+
+        SniperGloves sniperGloves = new SniperGloves();
+        sniperGloves.activate(player2);
+        player2.triedToPutBomb();
+        assertEquals(bomb, gameMap.objectAt(bombShiftedPosition));
+        assertNotEquals(bomb, gameMap.objectAt(bombPosition));
+        
+        //TODO out of map, more than 3 blocks
     }
 
     @Test

@@ -1,11 +1,10 @@
 package agh.ics.oop.map;
 
-import agh.ics.oop.gui.ITriedToMoveObserver;
 import agh.ics.oop.map.elem.*;
 import agh.ics.oop.map.elem.powerup.*;
 import java.util.*;
 
-public class GameMap implements ITriedToMoveObserver, IBombExplodedObserver {
+public class GameMap implements IBombExplodedObserver {
     private static final Random random = new Random();
     public static final int chestsNum = 90;
 
@@ -98,8 +97,7 @@ public class GameMap implements ITriedToMoveObserver, IBombExplodedObserver {
         return position.follows(upperLeft) && position.precedes(this.lowerRight);
     }
 
-    @Override
-    public void tiredToMove(Player player, Direction direction) {
+    public boolean tiredToMove(Player player, Direction direction) {
         Vector2d position = this.playersPositions.get(player).add(direction.tuUnitVector());
 
         if(canMoveTo(position) || (player.isGhost() && isInsideMap(position))) {
@@ -110,7 +108,9 @@ public class GameMap implements ITriedToMoveObserver, IBombExplodedObserver {
                 powerUp.activate(player);
                 this.powerUps.remove(position, powerUp);
             }
+            return true;
         }
+        return false;
     }
 
     public boolean putBomb(Player player, Bomb bomb) {

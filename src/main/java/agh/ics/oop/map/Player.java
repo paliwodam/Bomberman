@@ -1,6 +1,5 @@
 package agh.ics.oop.map;
 
-import agh.ics.oop.gui.ITriedToMoveObserver;
 import agh.ics.oop.map.elem.Bomb;
 import agh.ics.oop.map.elem.IBombExplodedObserver;
 
@@ -10,7 +9,7 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class Player implements ITriedToMoveObserver, IBombExplodedObserver {
+public class Player implements IBombExplodedObserver {
     private Health health;
     private Direction direction;
     private final GameMap map;
@@ -46,11 +45,8 @@ public class Player implements ITriedToMoveObserver, IBombExplodedObserver {
         this.bombs.add(bomb);
     }
 
-    @Override
-    public void tiredToMove(Player player, Direction direction){
-        if(player.equals(this)) {
+    public void tiredToMove(Direction direction){
             this.direction = direction;
-        }
     }
 
     public Health getHealth() { return this.health; }
