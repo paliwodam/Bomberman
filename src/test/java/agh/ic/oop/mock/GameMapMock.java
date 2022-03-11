@@ -1,4 +1,4 @@
-package agh.ics.oop.mock;
+package agh.ic.oop.mock;
 
 import agh.ics.oop.map.GameMap;
 import agh.ics.oop.map.Vector2d;

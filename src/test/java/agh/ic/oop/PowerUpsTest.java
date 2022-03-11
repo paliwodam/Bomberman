@@ -6,8 +6,8 @@ import agh.ics.oop.map.elem.powerup.Ghost;
 import agh.ics.oop.map.elem.powerup.Pocket;
 import agh.ics.oop.map.elem.powerup.Shield;
 import agh.ics.oop.map.elem.powerup.SniperGloves;
-import agh.ics.oop.mock.GameMapMock;
-import agh.ics.oop.mock.PlayerMock;
+import agh.ic.oop.mock.GameMapMock;
+import agh.ic.oop.mock.PlayerMock;
 import org.junit.jupiter.api.Test;
 
 import java.io.FileNotFoundException;
@@ -240,7 +240,7 @@ public class PowerUpsTest {
         player2.triedToPutBomb();
         assertEquals(bomb, gameMap.objectAt(bombShiftedPosition));
         assertNotEquals(bomb, gameMap.objectAt(bombPosition));
-        
+
         //TODO out of map, more than 3 blocks
     }
 

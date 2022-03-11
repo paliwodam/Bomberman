@@ -8,7 +8,7 @@ import agh.ics.oop.map.elem.Bomb;
 import agh.ics.oop.map.elem.Chest;
 import agh.ics.oop.map.elem.Wall;
 import agh.ics.oop.map.elem.powerup.*;
-import agh.ics.oop.mock.GameMapMock;
+import agh.ic.oop.mock.GameMapMock;
 import org.junit.jupiter.api.Test;
 
 import java.io.FileNotFoundException;
