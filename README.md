@@ -1,3 +1,3 @@
 # Bomberman
 
-![Game](/screen.PNG)
+![Game](/result.PNG)
