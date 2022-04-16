@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GitHub page as PWA template</title>
+  <link rel="canonical" href="https://paliwodam.github.io/Bomberman/" />
+  <link rel="manifest" href="/Bomberman/manifest.webmanifest">
+</head>
+<body>
+  <h1>GitHub page as PWA template</h1>
+    …
+  <script>
+      if (navigator.serviceWorker) {
+        navigator.serviceWorker.register (
+          '/github-page-pwa/sw.js',
+          {scope: '/github-page-pwa/'}
+        )
+      }
+  </script>
+</body>
+</html>
