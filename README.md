@@ -51,3 +51,5 @@ Protects you from bomb damage for 5 seconds
   <img height="150" src="https://github.com/paliwodam/Bomberman/blob/master/src/main/resources/speed1.png?raw=true">
 </p>
 It speeds up your movement
+
+
