@@ -1,6 +1,6 @@
 # Bomberman
 
-## Two players version of the well known game - Bomberman.
+## Two players version of the popular video game Bomberman.
 <p align="center">
   <img src="https://github.com/paliwodam/Bomberman/blob/master/src/main/resources/result.PNG?raw=true">
 </p>
